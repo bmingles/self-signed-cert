@@ -1,15 +1,17 @@
 # Self-signed cert
 
-Generates self-signed cert for local.deephaven.io
+Generates self-signed cert for `localhost`
 
 ./sslgen.sh
 
-## Mac
+Add server.crt as trusted cert
 
-Add to `/etc/hosts`
+## Dev Settings
 
+.env.development.local
+
+```sh
+HOST='0.0.0.0'
+PORT=443
+SSL_CERTS_DIR=/path/to/this/repo/certs/
 ```
-0.0.0.0 local.deephaven.io
-```
-
-Add server.crt as trusted cert to Keychain

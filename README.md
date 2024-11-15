@@ -2,11 +2,19 @@
 
 Generates self-signed cert for `localhost`
 
-./sslgen.sh
+## Generating Certs
 
-Add server.crt as trusted cert
+1. Run script with desired domain name (e.g. localhost, local.deephaven.io, somefakelocal.com)
+
+```sh
+./sslgen.sh localhost
+```
+
+2. Add the generated `.crt` as trusted cert
 
 ## Dev Settings
+
+> Note: DHE expects certs to be named `server.crt` and `server.key`
 
 .env.development.local
 

@@ -8,16 +8,25 @@ pushd certs
 
 domain=$1
 
-ca_key="$domain.CA.key"
-ca_crt="$domain.CA.crt"
+ca_key="rootCA.key"
+ca_crt="rootCA.crt"
 server_key="$domain.key"
 server_crt="$domain.crt"
 server_csr="$domain.csr"
 ext="$domain.ext"
 
-# https://www.baeldung.com/openssl-self-signed-cert
+cat <<EOF > $ext
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+subjectAltName = @alt_names
+[alt_names]
+DNS.1 = $domain
+EOF
 
-echo 'Generating private key and CSR...'
+# This generates a private key and a CSR. The private key is used to generate
+# the CSR but is also the private key that will be paired with the signed cert
+# created in the next step.
+echo 'Generating CSR...'
 openssl req \
  --nodes \
  -newkey rsa:2048 \
@@ -25,17 +34,7 @@ openssl req \
  -keyout "$server_key" \
  -out "$server_csr"
 
-echo 'Generating CA...'
-openssl req \
- -x509 \
- -sha256 \
- --nodes \
- -days 1825 \
- -newkey rsa:2048 \
- -subj "/C=US/ST=Tennessee/L=Spring Hill/O=Acme/OU=Dev/CN=$domain" \
- -keyout "$ca_key" \
- -out "$ca_crt"
-
+# Generate a certificate signed by the root CA using the CSR generated above.
 echo 'Sign our cert with CA...'
 openssl x509 -req \
  -days 365 \
